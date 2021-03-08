@@ -35,6 +35,7 @@ function checkBodyTobook(body) {
  * Returns the specified book (if exists) or all books if isbn is not provided.
  */
 exports.getBook = function (req, res, next) {
+
     //console.log("getBook isbn = %j", req.params.isbn);
     if (req.params.isbn === undefined){
         BookModel.getBooks(function(err, books) {
@@ -49,7 +50,7 @@ exports.getBook = function (req, res, next) {
     else{
         BookModel.getBook(req.params.isbn, function(err, book) {
             if(err) {
-                return next(err);
+                return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
             } else {
                 res.json(200, book);
                 return next();
@@ -59,39 +60,40 @@ exports.getBook = function (req, res, next) {
 }
 
 exports.postBook = function(req, res, next){
-    if (checkBodyTobook(req.body)){
-        BookModel.postBook(req.body, function(err, book) {
-            if(err) {
-                return next(new errs.ConflictError("Book" + req.params.isbn+" already exist"))
-            } else {
-
-                //mise a jour de la liste des books des auteurs
-                req.body.authors.forEach(element => {
-                    PersonModel.getPerson(element, function(err, person)
-                    {
-                        if(person !== null )
-                            person.books.push(book.isbn);
-                        else
-                            return next(errs.NotFoundError("Person "+ element +" Not found"));
-                        
-                    })
-                });
-                res.json(201, book)
-                return next()
-            }
-        })
-    }else
+    if (!checkBodyTobook(req.body)){
         return next(errs.UnprocessableEntityError+ "Impossblie de parse la donnée");
+    }
+    BookModel.postBook(req.body, function(err, book) {
+        if(err) {
+            //le livre existe deja
+            return next(new errs.ConflictError("Book " + req.params.isbn+" already exist"))
+        } else {
+            //mise a jour de la liste des books des auteurs
+            req.body.authors.forEach(element => {
+                PersonModel.getPerson(element, function(erre, person)
+                {
+                    if(person !== null )
+                        person.books.push(book.isbn);                        
+                    else
+                        return next(errs.NotFoundError("Person "+ element +" Not found"));
+                    
+                    })
+            });
+            res.json(201, book)
+            return next()
+        }
+    })
 }
+
 
 exports.putBook = function(req, res, next){
 
 }  
 
 exports.delBook = function(req, res, next){
-    BookModel.delBook(req.body , function(err,book){
+    BookModel.delBook(req.params.isbn, function(err,book){
         if(err) {
-            return next(err);
+            return next(new errs.NotFoundError("Book "+ req.params.isbn+" introuvable"));
         } else {
             res.json(200, book);
             return next();

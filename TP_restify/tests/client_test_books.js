@@ -8,6 +8,7 @@ let client = restify.createJsonClient({
 });
 
 async.seq(
+    
     function (callback) {
         // retrieving all existing book resources
         client.get('/api/book', function (err, req, res, books) {
@@ -18,6 +19,7 @@ async.seq(
             callback(null, 'test1');
         })
     },
+    
     function (tst, callback) {
         // retrieving an specific book resource
         client.get('/api/book/ZT56', function (err, req, res, book) {
@@ -27,6 +29,7 @@ async.seq(
             callback(null, tst + ' ' + 'test2');
         })
     },
+    
     function (tst, callback) {
         // creating a new resource
         client.post('/api/book', {isbn: "ZT58", title: "Nouvelle", authors:[{id:2}],price:15}, function (err, req, res, book) {
@@ -55,7 +58,7 @@ async.seq(
             callback(null, tst + ' ' + 'test5');
         })
     },
-    
+
     function (tst, callback) {
         // delete book ZT58
         client.del('/api/book/ZT58', function (err, req, res, book) {
@@ -65,7 +68,6 @@ async.seq(
             callback(null, tst + ' ' + 'test6');
         })
     },
-    /*
     function (tst, callback) {
         // the book is deleted so get request must fail
         client.get('/api/book/ZT58', function (err, req, res, book) {
@@ -74,6 +76,7 @@ async.seq(
             callback(null, tst + ' ' + 'test7');
         })
     },
+    /*
     function (tst, callback) {
         // updating book ZT56
         client.put('/api/book/ZT56', {"title": "Roman"}, function (err, req, res, updatedBook) {
