@@ -34,9 +34,7 @@ function checkBodyTobook(body) {
 /**
  * Returns the specified book (if exists) or all books if isbn is not provided.
  */
-exports.getBook = function (req, res, next) {
-
-    //console.log("getBook isbn = %j", req.params.isbn);
+exports.getBookV1 = function (req, res, next) {
     if (req.params.isbn === undefined){
         BookModel.getBooks(function(err, books) {
             if (err) {
@@ -58,6 +56,30 @@ exports.getBook = function (req, res, next) {
         }) 
     }
 }
+
+exports.getBookV2 = function (req, res, next) {
+    if (req.params.isbn === undefined){
+        BookModel.getBooks(function(err, books) {
+            if (err) {
+                return next(err);
+            } else {
+                res.json(200, books);
+                return next();
+            }
+        })
+    }
+    else{
+        BookModel.getBook(req.params.isbn, function(err, book) {
+            if(err) {
+                return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
+            } else {
+                res.json(200,books);
+                return next();
+            }
+        }) 
+    }
+}
+
 
 exports.postBook = function(req, res, next){
     if (!checkBodyTobook(req.body)){

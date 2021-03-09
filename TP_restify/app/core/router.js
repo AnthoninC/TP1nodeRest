@@ -25,8 +25,11 @@ server.use(restify.plugins.bodyParser());  // needed for body request parsing
 server.use(restify.plugins.queryParser()); // needed for query parameter request parsing
 
 // route configuration
-server.get("/api/book", controllers.BookController.getBook);
-server.get("/api/book/:isbn", controllers.BookController.getBook);
+server.get("/api/book", controllers.BookController.getBookV1);
+server.get("/api/book/:isbn",restify.plugins.conditionalHandler([
+    { version: '1.0.0', handler: controllers.BookController.getBookV1},
+    { version: '2.0.0', handler: controllers.BookController.getBookV2}
+  ]));
 server.post("/api/book",controllers.BookController.postBook);
 server.put("/api/book/:isbn",controllers.BookController.putBook);
 server.del("/api/book/:isbn", controllers.BookController.delBook);
