@@ -30,6 +30,14 @@ server.get("/api/book/:isbn", controllers.BookController.getBook);
 server.post("/api/book",controllers.BookController.postBook);
 server.put("/api/book/:isbn",controllers.BookController.putBook);
 server.del("/api/book/:isbn", controllers.BookController.delBook);
+server.get("/api/book/:isbn/author",restify.plugins.conditionalHandler([
+    { version: '1.0.0', handler: controllers.BookController.getAuthorsV1 },
+    { version: '2.0.0', handler: controllers.BookController.getAuthorsV2 }
+  ]));
+
+server.get("/api/person",controllers.PersonController.getPerson)
+server.get("/api/person/:id",controllers.PersonController.getPerson)
+
 
 var port = process.env.PORT || 3000;
 

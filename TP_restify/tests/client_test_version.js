@@ -22,6 +22,7 @@ async.seq(
             callback(null, 'test1');
         })
     },
+    
     function (tst, callback) {
         // versioned route V2 : get all properties of authors
         clientV2.get('/api/book/ZT57/author', function (err, req, res, authors) {

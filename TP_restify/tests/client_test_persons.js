@@ -18,6 +18,7 @@ async.seq(
             callback(null, 'test1');
         })
     },
+    
     function (tst, callback) {
         // retrieving the person resource 1
         client.get('/api/person/1', function (err, req, res, person) {
@@ -27,6 +28,7 @@ async.seq(
             callback(null, tst + ' ' + 'test2');
         })
     },
+
     function (tst, callback) {
         // trying to retrieve an unknown person
         client.get('/api/person/3', function (err, req, res, person) {
@@ -35,6 +37,7 @@ async.seq(
             callback(null, tst + ' ' + 'test3');
         })
     },
+
     function (tst, callback) {
         // retrieving all authors of book ZT56
         client.get('/api/book/ZT56/author', function (err, req, res, authors) {
@@ -44,6 +47,7 @@ async.seq(
             callback(null, tst + ' ' + 'test4');
         })
     },
+
 )(function (err, results) {
     console.log('Tests %j OK...', results);
 });

@@ -1,4 +1,4 @@
-    errs = require("restify-errors");
+let errs = require("restify-errors");
 
 let fs = require('fs'),
     PersonModel = require(process.cwd() + "/app/models/Person.js");
@@ -104,6 +104,7 @@ exports.postBook = function(book, callback){
 }
 
 exports.putBook = function(isbn, paramBook, callback){
+
     if(!alreadyExistByIsbn(isbn)){
         callback(new errs.NotFoundError("Book "+isbn+" introuvable"))
     }else {
@@ -136,4 +137,42 @@ exports.delBook = function(isbn,callback){
     }else{
         callback(new Error("Le livre n'existe pas"),isbn)
     }
+}
+
+exports.getAuthorsV1 = function(isbn,callback){
+    var authors = [];
+    var bookfind = false;
+    books.forEach(bookElement => {
+        if(bookElement.isbn == isbn){
+            bookfind = true
+            bookElement.authors.forEach(listAuthorselement => {
+                authors.push(listAuthorselement)
+            });
+        }
+    })
+    if(bookfind == true){
+        callback(null, authors)
+    }else {
+        callback(new errs.NotFoundError("Book "+ req.params.isbn+" introuvable"))
+    }
+    
+}
+
+exports.getAuthorsV2 = function(isbn,callback){
+    var idAuthors = [];
+    var bookfind = false;
+    books.forEach(bookElement => {
+        if(bookElement.isbn == isbn){
+            bookfind = true
+            bookElement.authors.forEach(listAuthorselement => {
+                idAuthors.push(listAuthorselement.id)
+            });
+        }
+    })
+    if(bookfind == true){
+        callback(null, idAuthors)
+    }else {
+        callback(new errs.NotFoundError("Book "+ req.params.isbn+" introuvable"))
+    }
+    
 }

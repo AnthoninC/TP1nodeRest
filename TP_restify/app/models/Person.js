@@ -17,6 +17,10 @@ exports.Person = function Person(id, firstname, lastname, books) {
     }
 };
 
+exports.getListPersons = function(){
+    return persons;
+}
+
 /**
  * Init a Person object array
  *
@@ -37,6 +41,10 @@ exports.savePersons = function () {
     return persons;
 };
 
+exports.getPersons = function(callback){
+    callback(null, persons)
+}
+
 exports.getPerson = function (id, callback){
     var person = null;
     persons.forEach(element => {
@@ -44,6 +52,9 @@ exports.getPerson = function (id, callback){
             person = element;
         }
     })
-    callback(null,person);
-    ;
+    if(person == null){
+        callback(new Error("Impossible de trouver la personne :"+id),person)
+    }else{
+        callback(null,person);
+    }
 }

@@ -107,4 +107,34 @@ exports.delBook = function(req, res, next){
         }
     })
 }
+
+exports.getAuthorsV1 = function(req,res,next){
+    BookModel.getAuthorsV1(req.params.isbn, function(err, authors){
+        if(err){
+            return next(err);
+        }else{
+            res.json(200,authors)
+            return next();
+        }
+    })
+}
+
+exports.getAuthorsV2 = function(req,res,next){
+    BookModel.getAuthorsV2(req.params.isbn, function(err, idAuthors){
+        if(err){
+            return next(err);
+        }else{
+            var authorsBack = []
+            PersonModel.getListPersons().forEach(person => {
+                idAuthors.forEach(idAuthor => {
+                    if(idAuthor == person.id){
+                        authorsBack.push(person)
+                    }
+                });
+            });
+            res.json(200,authorsBack)
+            return next();
+        }
+    })
+}
 ;
