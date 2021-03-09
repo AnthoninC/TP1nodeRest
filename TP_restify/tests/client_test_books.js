@@ -76,7 +76,7 @@ async.seq(
             callback(null, tst + ' ' + 'test7');
         })
     },
-    /*
+    
     function (tst, callback) {
         // updating book ZT56
         client.put('/api/book/ZT56', {"title": "Roman"}, function (err, req, res, updatedBook) {
@@ -95,7 +95,7 @@ async.seq(
                 {"isbn":"ZT57","title":"Roman","authors":[{"id":2}],"price":8}], 'Pb get (test9)');
             callback(null, tst + ' ' + 'test9');
         })
-    },*/
+    },
 
 )(function (err, results) {
     console.log('Tests %j OK...', results);

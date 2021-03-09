@@ -87,7 +87,14 @@ exports.postBook = function(req, res, next){
 
 
 exports.putBook = function(req, res, next){
-
+    BookModel.putBook(req.params.isbn,req.body, function(err, book) {
+        if(err) {
+            return next(err);
+        } else {
+            res.json(200, book);
+            return next();
+        }
+    }) 
 }  
 
 exports.delBook = function(req, res, next){

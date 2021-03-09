@@ -28,7 +28,7 @@ server.use(restify.plugins.queryParser()); // needed for query parameter request
 server.get("/api/book", controllers.BookController.getBook);
 server.get("/api/book/:isbn", controllers.BookController.getBook);
 server.post("/api/book",controllers.BookController.postBook);
-//server.put("/api/book/:isbn",controllers.BookController.putBook);
+server.put("/api/book/:isbn",controllers.BookController.putBook);
 server.del("/api/book/:isbn", controllers.BookController.delBook);
 
 var port = process.env.PORT || 3000;

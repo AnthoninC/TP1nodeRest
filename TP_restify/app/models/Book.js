@@ -57,6 +57,21 @@ function alreadyExistByIsbn(idBook){
     }
     return false;
 }
+function setTitleBook(isbn,value){
+    books.forEach(element => {
+        if(element.isbn== isbn){
+            element.title = value;
+        }
+    });
+}
+
+function setPriceBook(isbn,value){
+    books.forEach(element => {
+        if(element.isbn== isbn){
+            element.price = value;
+        }
+    });
+}
 
 /**
  * Get all Book objects
@@ -88,8 +103,24 @@ exports.postBook = function(book, callback){
     }
 }
 
-exports.putBook = function(callback){
-
+exports.putBook = function(isbn, paramBook, callback){
+    if(!alreadyExistByIsbn(isbn)){
+        callback(new errs.NotFoundError("Book "+isbn+" introuvable"))
+    }else {
+        if(paramBook.title != null){
+            setTitleBook(isbn, paramBook.title);
+        }
+        if(paramBook.price != null){
+            setPriceBook(isbn, paramBook.price)
+        }
+        var book = null;
+        books.forEach(element => {
+            if(element.isbn == isbn){
+                book = element
+            }
+        });
+        callback(null, book);
+    }
 }
 
 exports.delBook = function(isbn,callback){
