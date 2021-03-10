@@ -91,7 +91,6 @@ exports.getBookV2 = function (req, res, next) {
                         authorLink : Server.getServer().router.render('author', {id:element.id},{})  
                     });
                 });
-
                 res.json(200,bookHypermedia);
                 return next();
             }

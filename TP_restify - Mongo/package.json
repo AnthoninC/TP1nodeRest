@@ -455,6 +455,7 @@
       "resolved": "https://registry.npmjs.org/moment/-/moment-2.24.0.tgz",
       "version": "2.24.0"
     },
+    "mongoose": "^5.11.19",
     "ms": {
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
