@@ -21,7 +21,10 @@ exports.saveStorage = function () {
     console.log("Data saved: %j", data);
 };
 
-
+/*
+* Retourne toute les peronnnes s'il n'y a pas de parametre
+* sinon retourne la personne en fonction du parametre
+*/
 exports.getPerson = function (req,res,next){
     if (req.params.id === undefined){
         PersonModel.getPersons(function(err, persons) {

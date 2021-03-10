@@ -40,6 +40,9 @@ exports.saveBooks = function () {
     return books;
 };
 
+/**
+ * Verifie si le book en parametre existe deja 
+ */
 function alreadyExist(book){
     for(var i= 0; i < books.length; i++){
         if(JSON.stringify(books[i]) == JSON.stringify(book)){
@@ -49,6 +52,9 @@ function alreadyExist(book){
     return false;
 }
 
+/*
+* Verifie si l'insbn en parametre correspond a un isbn deja existant
+*/
 function alreadyExistByIsbn(idBook){
     for(var i= 0; i < books.length; i++){
         if(books[i].isbn == idBook) {
@@ -57,6 +63,10 @@ function alreadyExistByIsbn(idBook){
     }
     return false;
 }
+
+/*
+* Mise à jour de l'attribut titre d'un book
+*/
 function setTitleBook(isbn,value){
     books.forEach(element => {
         if(element.isbn== isbn){
@@ -65,6 +75,9 @@ function setTitleBook(isbn,value){
     });
 }
 
+/*
+* Mise à jour de l'attribut price d'un book
+*/
 function setPriceBook(isbn,value){
     books.forEach(element => {
         if(element.isbn== isbn){
@@ -94,6 +107,9 @@ exports.getBook = function(isbn,callback) {
     }
 };
 
+/**
+ * ajout d'un livre 
+ */
 exports.postBook = function(book, callback){
     if(!alreadyExist(book)){
         books.push(book);
@@ -103,6 +119,9 @@ exports.postBook = function(book, callback){
     }
 }
 
+/**
+ * mise à jour d'un livre 
+ */
 exports.putBook = function(isbn, paramBook, callback){
 
     if(!alreadyExistByIsbn(isbn)){
@@ -124,6 +143,9 @@ exports.putBook = function(isbn, paramBook, callback){
     }
 }
 
+/**
+ * suppression d'un book 
+ */
 exports.delBook = function(isbn,callback){
     if(alreadyExistByIsbn(isbn)){
         var book;
@@ -139,6 +161,9 @@ exports.delBook = function(isbn,callback){
     }
 }
 
+/**
+ * retourne la liste des id des auteurs
+ */
 exports.getAuthorsV1 = function(isbn,callback){
     var authors = [];
     var bookfind = false;
@@ -157,7 +182,9 @@ exports.getAuthorsV1 = function(isbn,callback){
     }
     
 }
-
+/**
+ * retourne la liste des auteurs
+ */
 exports.getAuthorsV2 = function(isbn,callback){
     var idAuthors = [];
     var bookfind = false;

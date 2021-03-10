@@ -17,6 +17,9 @@ exports.Person = function Person(id, firstname, lastname, books) {
     }
 };
 
+/*
+* retourne la liste des personnes au format list
+*/
 exports.getListPersons = function(){
     return persons;
 }
@@ -41,10 +44,16 @@ exports.savePersons = function () {
     return persons;
 };
 
+/*
+* retourne la liste des personnes
+*/
 exports.getPersons = function(callback){
     callback(null, persons)
 }
 
+/**
+ * retourne une personne via son id 
+ */
 exports.getPerson = function (id, callback){
     var person = null;
     persons.forEach(element => {

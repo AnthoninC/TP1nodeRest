@@ -39,7 +39,8 @@ server.get("/api/book/:isbn/author",restify.plugins.conditionalHandler([
   ]));
 
 server.get("/api/person",controllers.PersonController.getPerson)
-server.get("/api/person/:id",controllers.PersonController.getPerson)
+//server.get("/api/person/:id",controllers.PersonController.getPerson)
+server.get({name: 'author', path: '/api/person/:id'},controllers.PersonController.getPerson);
 
 
 var port = process.env.PORT || 3000;

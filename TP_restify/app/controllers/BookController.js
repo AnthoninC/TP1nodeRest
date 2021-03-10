@@ -20,6 +20,9 @@ exports.saveStorage = function () {
     console.log("Data saved: %j", data);
 }
 
+/*
+* Verifie que le parametre a bien la structure d'un book
+*/
 function checkBodyTobook(body) {
     if(body.isbn !== undefined){
         if(body.title !== undefined){
@@ -57,6 +60,9 @@ exports.getBookV1 = function (req, res, next) {
     }
 }
 
+/*
+* Retourne les livres ou un livre au format hypermedia
+*/
 exports.getBookV2 = function (req, res, next) {
     if (req.params.isbn === undefined){
         BookModel.getBooks(function(err, books) {
@@ -73,14 +79,29 @@ exports.getBookV2 = function (req, res, next) {
             if(err) {
                 return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
             } else {
-                res.json(200,books);
+                var bookHypermedia = {
+                    isbn: book.isbn,
+                    title: book.title,                    
+                    price: book.price,
+                    authors : []
+                }
+                book.authors.forEach(element => {
+                    bookHypermedia.authors.push({
+                        id: element.id,
+                        authorLink : Server.getServer().router.render('author', {id:element.id},{})  
+                    });
+                });
+
+                res.json(200,bookHypermedia);
                 return next();
             }
         }) 
     }
 }
 
-
+/*
+ * Permet la création d'un book 
+ */
 exports.postBook = function(req, res, next){
     if (!checkBodyTobook(req.body)){
         return next(errs.UnprocessableEntityError+ "Impossblie de parse la donnée");
@@ -107,7 +128,9 @@ exports.postBook = function(req, res, next){
     })
 }
 
-
+/*
+* Modification d'un book 
+*/
 exports.putBook = function(req, res, next){
     BookModel.putBook(req.params.isbn,req.body, function(err, book) {
         if(err) {
@@ -119,6 +142,9 @@ exports.putBook = function(req, res, next){
     }) 
 }  
 
+/*
+ * Suppression d'un book 
+ */
 exports.delBook = function(req, res, next){
     BookModel.delBook(req.params.isbn, function(err,book){
         if(err) {
@@ -130,6 +156,9 @@ exports.delBook = function(req, res, next){
     })
 }
 
+/*
+ *  retourne la liste des id des auteurs d'un book 
+ */
 exports.getAuthorsV1 = function(req,res,next){
     BookModel.getAuthorsV1(req.params.isbn, function(err, authors){
         if(err){
@@ -141,6 +170,9 @@ exports.getAuthorsV1 = function(req,res,next){
     })
 }
 
+/*
+*  retourne la liste des auteurs d'un book 
+*/
 exports.getAuthorsV2 = function(req,res,next){
     BookModel.getAuthorsV2(req.params.isbn, function(err, idAuthors){
         if(err){
