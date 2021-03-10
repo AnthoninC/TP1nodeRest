@@ -33,7 +33,8 @@ exports.initStorage = function (next) {
  * Save book set
  */
 exports.saveStorage = function () {
-    
+    //var data = BookModel.saveBooks();
+    //console.log("Data saved: %j", data);
 }
 
 /*
@@ -55,10 +56,11 @@ function checkBodyTobook(body) {
  */
 exports.getBookV1 = function (req, res, next) {
     if (req.params.isbn === undefined){
-        res.json(200, book.find({}));
+        res.json(200, Book.find({}));
         return next();
     }else{
-        bookRetour = book.find({isbn = req.param.isbn}).exec();
+        var isbn = req.param.isbn;
+        bookRetour = Book.find({isbn}).exec();
         if(bookRetour == null){
             return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
         } else {
@@ -74,27 +76,21 @@ exports.getBookV1 = function (req, res, next) {
 */
 exports.getBookV2 = function (req, res, next) {
     if (req.params.isbn === undefined){
-        BookModel.getBooks(function(err, books) {
-            if (err) {
-                return next(err);
-            } else {
-                res.json(200, books);
+                res.json(200, Book.find({}));
                 return next();
-            }
-        })
-    }
-    else{
-        BookModel.getBook(req.params.isbn, function(err, book) {
-            if(err) {
+    }else{
+        var isbn = req.param.isbn
+        bookRetour = Book.find({isbn}).exec();
+            if(bookRetour == null) {
                 return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
             } else {
                 var bookHypermedia = {
-                    isbn: book.isbn,
-                    title: book.title,                    
-                    price: book.price,
+                    isbn: bookRetour.isbn,
+                    title: bookRetour.title,                    
+                    price: bookRetour.price,
                     authors : []
                 }
-                book.authors.forEach(element => {
+                bookRetour.authors.forEach(element => {
                     bookHypermedia.authors.push({
                         id: element.id,
                         authorLink : Server.getServer().router.render('author', {id:element.id},{})  
@@ -104,7 +100,6 @@ exports.getBookV2 = function (req, res, next) {
                 res.json(200,bookHypermedia);
                 return next();
             }
-        }) 
     }
 }
 
@@ -115,23 +110,14 @@ exports.postBook = function(req, res, next){
     if (!checkBodyTobook(req.body)){
         return next(errs.UnprocessableEntityError+ "Impossblie de parse la donnée");
     }
-    BookModel.postBook(req.body, function(err, book) {
-        if(err) {
+        var isbn = req.boby.isbn
+        bookRetour = Book.find({isbn}).exec();
+        if(bookRetour != null) {
             //le livre existe deja
             return next(new errs.ConflictError("Book " + req.params.isbn+" already exist"))
         } else {
-            //mise a jour de la liste des books des auteurs
-            req.body.authors.forEach(element => {
-                PersonModel.getPerson(element, function(erre, person)
-                {
-                    if(person !== null )
-                        person.books.push(book.isbn);                        
-                    else
-                        return next(errs.NotFoundError("Person "+ element +" Not found"));
-                    
-                    })
-            });
-            res.json(201, book)
+            Book.post(req.body, function(err) {});
+            res.json(201, req.body)
             return next()
         }
     })
@@ -141,28 +127,30 @@ exports.postBook = function(req, res, next){
 * Modification d'un book 
 */
 exports.putBook = function(req, res, next){
-    BookModel.putBook(req.params.isbn,req.body, function(err, book) {
-        if(err) {
-            return next(err);
-        } else {
-            res.json(200, book);
-            return next();
-        }
-    }) 
+    var isbn = req.param.isbn
+    bookRetour = Book.find({isbn}).exec();
+    if(bookRetour != null) {
+        return next(err);
+    } else {
+        Book.put(req.body, function(err) {});
+        res.json(200, book);
+        return next();
+        } 
 }  
 
 /*
  * Suppression d'un book 
  */
 exports.delBook = function(req, res, next){
-    BookModel.delBook(req.params.isbn, function(err,book){
-        if(err) {
+        var isbn = req.boby.isbn
+        bookRetour = Book.find({isbn}).exec();
+        if(bookRetour == null) {
             return next(new errs.NotFoundError("Book "+ req.params.isbn+" introuvable"));
         } else {
-            res.json(200, book);
+            Book.delete(req.param.isbn, function(err){});
+            res.json(200, bookRetour);
             return next();
         }
-    })
 }
 
 /*

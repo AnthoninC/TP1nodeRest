@@ -97,7 +97,7 @@ exports.getBookV2 = function (req, res, next) {
             }
         }) 
     }
-}c
+}
 
 /*
  * Permet la création d'un book 

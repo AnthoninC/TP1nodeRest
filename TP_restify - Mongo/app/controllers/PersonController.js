@@ -19,7 +19,7 @@ exports.initStorage = function () {
     person1.save(function (err, person1){
         if (err) return console.error(err);
     });
-    const Person2 = new Person({"id": 2,"firstname": "Paul","lastname": "Martin","books": [{"isbn": 2}]});
+    const person2 = new Person({"id": 2,"firstname": "Paul","lastname": "Martin","books": [{"isbn": 2}]});
     person2.save(function (err, person2){
         if (err) return console.error(err);
     });
@@ -31,7 +31,8 @@ exports.initStorage = function () {
  */
 
 exports.saveStorage = function () {
-
+   // var data = BookModel.saveBooks();
+   // console.log("Data saved: %j", data);
 };
 
 /*
@@ -40,22 +41,16 @@ exports.saveStorage = function () {
 */
 exports.getPerson = function (req,res,next){
     if (req.params.id === undefined){
-        PersonModel.getPersons(function(err, persons) {
-            if (err) {
-                return next(err);
-            } else {
-                res.json(200, persons);
-                return next();
-            }
-        })
+        res.json(200, Person.find({}));
+        return next();
     }else{
-        PersonModel.getPerson(req.params.id, function(err, person) {
-            if(err) {
+        var isbn = req.param.isbn;
+        var personRetour = Person.find({isbn}).exec();
+            if(bookRetour == null) {
                 return next(new errs.NotFoundError("Person "+ req.params.id + "est introuvable"));
             } else {
-                res.json(200, person);
+                res.json(200, personRetour);
                 return next();
             }
-        }) 
     }
 }
