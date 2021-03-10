@@ -1,6 +1,7 @@
 let restify = require('restify'),
     errs = require('restify-errors'),
     fs = require('fs');
+    mongoose = require('mongoose');
 
 // To activate controllers
 let controllers = {}
@@ -49,18 +50,29 @@ server.listen(port, function (err) {
     if (err)
         console.error(err)
     else {
+        mongoose.connect('mongodb://localhost:/books', {useNewUrlParser: true, useUnifiedTopology: true});
         // pseudo persistence : load data from JSON files
-        controllers.BookController.initStorage();
-        controllers.PersonController.initStorage();
-        console.log('App is ready at : ' + port);
+        controllers.PersonController.initStorage(function(erre){
+            controllers.BookController.initStorage(function(err){
+                console.log('App is ready at : ' + port);
+            });
+        });
     }
 });
 
-/** function called just before server shutdown
 process.on('SIGINT', function () {
     // pseudo persistence : backup current data into JSON files
-    controllers.BookController.saveStorage();
-    controllers.PersonController.saveStorage();
-    process.exit(0);
+    controllers.BookController.saveStorage(function(err)
+    {
+        controllers.PersonController.saveStorage(function(err)
+        {
+            mongoose.disconnect(function()
+            {
+                console.log("Connection close");
+                console.log("App shutdown");
+                process.exit(0);
+            });
+        });
+    });
 });
-*/
+

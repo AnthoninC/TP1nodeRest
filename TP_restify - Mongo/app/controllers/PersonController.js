@@ -1,15 +1,29 @@
 let fs = require('fs'),
-    BookModel = require(process.cwd() + "/app/models/Book.js"),
-    PersonModel = require(process.cwd() + "/app/models/Person.js"),
     errs = require("restify-errors");
+
+    const PersonSchema = new moogoose.Schema({
+        id: String,
+        firstname : String,
+        lastname : String,
+        books:[BookSchema]
+    });
+
+    const Person = mongoose.model('Person', PersonSchema);
 
 /**
  * Init book set.
  */
-
 exports.initStorage = function () {
-    let persons = PersonModel.loadPersons();
-    console.log("Persons loaded: %j", persons);
+
+    const person1 = new Person({"id": 1,"firstname": "Pierre","lastname": "Durand","books": [{"isbn": 1},{"isbn": 2}]});
+    person1.save(function (err, person1){
+        if (err) return console.error(err);
+    });
+    const Person2 = new Person({"id": 2,"firstname": "Paul","lastname": "Martin","books": [{"isbn": 2}]});
+    person2.save(function (err, person2){
+        if (err) return console.error(err);
+    });
+
 };
 
 /**
@@ -17,8 +31,7 @@ exports.initStorage = function () {
  */
 
 exports.saveStorage = function () {
-    var data = BookModel.saveBooks();
-    console.log("Data saved: %j", data);
+
 };
 
 /*

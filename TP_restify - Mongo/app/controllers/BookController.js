@@ -1,23 +1,39 @@
 let fs = require('fs'),
-    BookModel = require(process.cwd() + "/app/models/Book.js"),
-    PersonModel = require(process.cwd() + "/app/models/Person.js"),
     Server = require(process.cwd() + "/app/core/router.js"),
-    errs = require("restify-errors");
+    errs = require("restify-errors"),
+    mongoose = require('mongoose');
+
+    const BookSchema = new mongoose.Schema({
+        isbn: String,
+        title: String,
+        price: Number, 
+        authors: [Number]
+    }); 
+
+    const Book = mongoose.model('Book', BookSchema);
 
 /**
  * Init book set.
  */
-exports.initStorage = function () {
-    let books = BookModel.loadBooks();
-    console.log("Books loaded: %j", books);
+exports.initStorage = function (next) {
+
+    const book1 = new Book({ "isbn": "ZT56","title": "Essai","authors": [{"id": 1},{"id": 2}],"price": 12.4});    
+    book1.save(function (err, book1){
+        if (err) return console.error(err);
+    });
+
+    const book2 = new Book({ "isbn": "ZT57","title": "Roman","authors": [{"id": 2}],"price": 8});
+    book1.save(function (err, book2){
+        if (err) return console.error(err);
+    });
+
 };
 
 /**
  * Save book set
  */
 exports.saveStorage = function () {
-    var data = BookModel.saveBooks();
-    console.log("Data saved: %j", data);
+    
 }
 
 /*
@@ -38,25 +54,17 @@ function checkBodyTobook(body) {
  * Returns the specified book (if exists) or all books if isbn is not provided.
  */
 exports.getBookV1 = function (req, res, next) {
-    //console.log("getBook isbn = %j", req.params.isbn);
     if (req.params.isbn === undefined){
-        BookModel.getBooks(function(err, books) {
-            if (err) {
-                return next(err);
-            } else {
-                res.json(200, books);
-                return next();
-            }
-        })
-    }
-    else{
-        BookModel.getBook(req.params.isbn, function(err, book) {
-            if(err) {
-                return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
-            } else {
-                res.json(200, book);
-                return next();
-            }
+        res.json(200, book.find({}));
+        return next();
+    }else{
+        bookRetour = book.find({isbn = req.param.isbn}).exec();
+        if(bookRetour == null){
+            return next(new errs.NotFoundError("Book "+ req.params.isbn + "est introuvable"));
+        } else {
+            res.json(200, bookRetour);
+            return next();
+        }
         }) 
     }
 }
@@ -92,12 +100,13 @@ exports.getBookV2 = function (req, res, next) {
                         authorLink : Server.getServer().router.render('author', {id:element.id},{})  
                     });
                 });
+
                 res.json(200,bookHypermedia);
                 return next();
             }
         }) 
     }
-}c
+}
 
 /*
  * Permet la création d'un book 
@@ -191,4 +200,4 @@ exports.getAuthorsV2 = function(req,res,next){
         }
     })
 }
-;
+
