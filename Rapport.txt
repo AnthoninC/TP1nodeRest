@@ -1,0 +1,3 @@
+Pour la 1ere partie, tous les tests sont fonctionnel.
+
+Pour la second partie de mongoose, je n'ai pas reussie a finir, les tests ne passe pas, j'ai uniquement fait une premiere approche de modification de mongo.
